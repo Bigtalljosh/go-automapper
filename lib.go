@@ -90,7 +90,10 @@ func mapField(source, dstVal reflect.Value, i int, loose bool) {
 	fieldName := dstType.Field(i).Name
 
 	destField := dstVal.Field(i)
-	if dstType.Field(i).Anonymous {
+	if !destField.CanInterface() {
+		// This field is not exported so we skip it
+		return
+	} else if dstType.Field(i).Anonymous {
 		mapValues(source, destField, loose)
 	} else {
 		if valueIsContainedInNilEmbeddedType(source, fieldName) {
